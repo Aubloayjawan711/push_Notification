@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h2> Send a CUSTOM Notification</h2>
+    <textarea name="" id="notifteext" placeholder="Type your message here ..."></textarea>
+  <button onclick="sendNotification">send Notification</button>
+  <script>
+    Notification.requestPermission();
+    async function sendNotification() {
+        const msg=document.getElementById('notifteext').value.trim();
+        if(!msg){
+            alert("PLEASE TYPE A MASSAGE");
+                return;
+        }
+        const reg=await navigator.serviceWorker.getRegistration();
+        if(reg){
+            reg.showNotification("🚨 New Message !",{
+                body :msg,
+                icon :"",
+                badge:"",
+                tag:"",
+                data:{url:"/"}
+            });
+        }
+        else{
+            alert("Service Worker not regstered");
+        }
+        
+    }
+  </script>
+</body>
+</html>
