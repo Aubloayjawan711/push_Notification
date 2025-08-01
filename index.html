@@ -1,47 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PWA Simple Notification</title>
-    <link rel="manifest" href="manifest.json">
-    <link rel="stylesheet" href="style.css">
-    <p>fahem jawan</p>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PWA Simple Notification</title>
+  <link rel="manifest" href="/push_Notification/manifest.json" />
+  <link rel="stylesheet" href="/push_Notification/style.css" />
 </head>
 <body>
-    <div class="container">
-        <h1>my PWA App</h1>
-        <button id="notifyBtn">Show Notification </button>
-        <button id="installBtn">Install App</button>
-    </div>
-    <script>
-         if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js')
-      .then(() => console.log("✅ Service Worker Registered"))
-      .catch(err =>console.error("❌ Service Worker registration failed:', err"));
+  <div class="container">
+    <h1>my PWA App</h1>
+    <button id="notifyBtn">Show Notification</button>
+    <button id="installBtn" hidden>Install App</button>
+  </div>
 
-         }
+  <script>
+    // تسجيل خدمة الـ Service Worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/push_Notification/sw.js')
+        .then(() => console.log("✅ Service Worker Registered"))
+        .catch(err => console.error("❌ Service Worker registration failed:", err));
+    }
 
-         const notifyBtn = document.getElementById('notifyBtn');
-//عملية الاستماع لحدث البتن 
-//ثم يقوم باستدعاء الالة التي تم تمريرها ك كلوباك
-         notifyBtn.addEventListener('click', () =>{
-            //Notification هي عبارة عن كلاس الاشعارات 
-            Notification.requestPermission().then(Permission =>{
-                // requestPermission()هو اسم المتغير الذي يمثل القيمة التي تعيدها الدالة Permission
-                //  بعد أن يختار المستخدم السماح أو رفض الإشعارات.
-                if(Permission ==='granted'){
-                    new Notification("🚀 Hello!",{
-                        body:"The is a simple Notification !",
-                        icon: "icons/icon-192x192.png"
+    // التعامل مع زر الإشعارات
+    const notifyBtn = document.getElementById('notifyBtn');
+    notifyBtn.addEventListener('click', () => {
+      Notification.requestPermission().then(permission => {
+        if (permission === 'granted') {
+          new Notification("🚀 Hello!", {
+            body: "This is a simple Notification!",
+            icon: "/push_Notification/icons/icon-192x192.png"
+          });
+        } else {
+          alert('Notification permission not granted.');
+        }
+      });
+    });
 
-                    }
-                    );
-                }
-            });
-         });
+    // التعامل مع زر التثبيت
+    let deferredPrompt;
+    const installBtn = document.getElementById('installBtn');
 
-    </script>
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.hidden = false;
+
+      installBtn.addEventListener('click', () => {
+        installBtn.hidden = true;
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then(choiceResult => {
+          if (choiceResult.outcome === 'accepted') {
+            console.log('✅ App installed');
+          } else {
+            console.log('❌ App installation declined');
+          }
+          deferredPrompt = null;
+        });
+      });
+    });
+  </script>
 </body>
-
 </html>
