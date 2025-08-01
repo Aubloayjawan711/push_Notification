@@ -9,8 +9,8 @@ self.addEventListener('install', event => {
         './style.css',
         './manifest.json',
         './notify.js',
-        './icons/icon-192x192.png',
-        './icons/icon-512x512.png'
+        './icon-192x192.png',
+        './icon-512x512.png'
 
       ]);
     })
@@ -29,4 +29,5 @@ self.addEventListener('notificationclick', function(event) {
         clients.openWindow(event.notification.data?.url || '/')
     );
 });
+
 
